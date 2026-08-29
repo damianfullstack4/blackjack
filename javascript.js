@@ -3,8 +3,10 @@ const CARD_SUITE_MAX = 13;
 
 const SUITES = [`Spades`, `Clubs`, `Diamonds`, `Hearts`];
 
-const deck = {
+const dealer = {
     cards: [],
+    players: [],
+    hand: [],
 
     build: function(){
         for(const suite of SUITES){
@@ -14,14 +16,14 @@ const deck = {
                 let id = currNum;
                 if(currNum > 10){
                     currNum = 10;
-                    faceCard = true;
-                }else {faceCard = false;}
+                    isFaceCard = true;
+                }
                 this.cards.push(
                     {
                         suite: suite,
                         id: id,
                         num: currNum,
-                        faceCard: faceCard,
+                        faceCard: isFaceCard,
                     }
                 )
             }
@@ -37,13 +39,46 @@ const deck = {
         }
     },
 
-    draw: function(){return this.cards.pop();}
+    addPlayer: function(player){
+        this.players.push({
+            name: player,
+            hand: [],
+        });
+    },
 
+    drawCard(withdrawHand, depositHand){
+        depositHand.push(withdrawHand.pop());
+    },
+
+    dealCards: function(){
+        const rounds = 2;
+        for(let i = 0; i < rounds; i++){
+            for(const player of this.players){
+                this.drawCard(this.cards, player.hand);
+            }
+        }
+    },
+
+    displayHands: function(){
+        for(const player of this.players){
+            console.table(player.hand);
+        }
+        console.table(this.hand);
+        console.table(this.cards);
+    }
     //
 }
 
-deck.build();
-deck.shuffle();
-// console.table(deck.cards);
-// console.log(deck.draw());
-// console.table(deck.cards);
+// Ready The Deck //
+dealer.build();
+dealer.shuffle();
+
+// Add Players //
+const playerNameList = [`Adam Dennison`, `Jerry Hence`, `Johsua Martin`]
+for(const playerName of playerNameList){
+    dealer.addPlayer(playerName);
+}
+
+// Deal Cards and Display //
+dealer.dealCards();
+//dealer.displayHands();
